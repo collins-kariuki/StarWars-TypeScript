@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { PERSON_QUERY } from "./Queries";
 import { useQuery } from "@apollo/client";
 import { useParams, useHistory } from "react-router-dom";
@@ -12,11 +13,24 @@ const Details: React.FC = () => {
   let history = useHistory();
   const goToPrevPath = () => history.goBack();
 
+  const [homeWorld, sethomeWorld] = useState("N/A");
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
   const imageURL: string = `/characters/${index}.jpg`;
+
   const person = data.person[0];
+
+  async function fetchHomeWorld() {
+    await axios
+      .get(person.homeworld)
+      .then((json) => sethomeWorld(String(json.data.name)));
+
+    console.log("axios ndani");
+  }
+  fetchHomeWorld();
+
   const iconStyle: string = "h-4 fill-current text-yellow-300 pr-4";
   return (
     <div className=" max-w-4xl flex items-center h-auto lg:h-screen flex-wrap mx-auto my-32 lg:my-0">
@@ -72,7 +86,7 @@ const Details: React.FC = () => {
             >
               <path d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" />
             </svg>
-            Home World
+            Home World: {homeWorld}
           </p>
 
           {/*Back button */}
